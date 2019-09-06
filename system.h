@@ -158,9 +158,17 @@ enum vlan_proto {
 	VLAN_PROTO_8021AD = 0x88A8
 };
 
+struct vlan_qos_mapping {
+	struct list_head list; /* entry in vlandev_config->{e,in}ress_qos_mapping_list */
+	uint32_t from;
+	uint32_t to;
+};
+
 struct vlandev_config {
 	enum vlan_proto proto;
 	uint16_t vid;
+	struct list_head ingress_qos_mapping_list; /* list of struct vlan_qos_mapping  */
+	struct list_head egress_qos_mapping_list;  /* list of struct vlan_qos_mapping  */
 };
 
 static inline int system_get_addr_family(unsigned int flags)
