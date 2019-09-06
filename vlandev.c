@@ -22,12 +22,16 @@
 enum {
 	VLANDEV_ATTR_IFNAME,
 	VLANDEV_ATTR_VID,
+	VLANDEV_ATTR_EGRESS_QOS_FROM,
+	VLANDEV_ATTR_EGRESS_QOS_TO,
 	__VLANDEV_ATTR_MAX
 };
 
 static const struct blobmsg_policy vlandev_attrs[__VLANDEV_ATTR_MAX] = {
 	[VLANDEV_ATTR_IFNAME] = { "ifname", BLOBMSG_TYPE_STRING },
 	[VLANDEV_ATTR_VID] = { "vid", BLOBMSG_TYPE_INT32 },
+	[VLANDEV_ATTR_EGRESS_QOS_FROM] = { "egress_qos_from", BLOBMSG_TYPE_INT32 },
+	[VLANDEV_ATTR_EGRESS_QOS_TO] = { "egress_qos_to", BLOBMSG_TYPE_INT32 },
 };
 
 static const struct uci_blob_param_list vlandev_attr_list = {
@@ -161,9 +165,15 @@ vlandev_apply_settings(struct vlandev_device *mvdev, struct blob_attr **tb)
 	cfg->proto = (mvdev->dev.type == &vlan8021q_device_type) ?
 		VLAN_PROTO_8021Q : VLAN_PROTO_8021AD;
 	cfg->vid = 1;
+	cfg->egress_qos.from = 0;
+	cfg->egress_qos.to = 0;
 
 	if ((cur = tb[VLANDEV_ATTR_VID]))
 		cfg->vid = (uint16_t) blobmsg_get_u32(cur);
+	if ((cur = tb[VLANDEV_ATTR_EGRESS_QOS_FROM]))
+		cfg->egress_qos.from = (uint32_t) blobmsg_get_u32(cur);
+	if ((cur = tb[VLANDEV_ATTR_EGRESS_QOS_TO]))
+		cfg->egress_qos.to = (uint32_t) blobmsg_get_u32(cur);
 }
 
 static enum dev_change_type

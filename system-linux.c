@@ -1349,6 +1349,8 @@ int system_vlandev_add(struct device *vlandev, struct device *dev, struct vlande
 		netifd_log_message(L_WARNING, "%s Your kernel is older than linux 3.10.0, 802.1ad is not supported defaulting to 802.1q", vlandev->type->name);
 #endif
 
+	nla_put(msg, IFLA_VLAN_EGRESS_QOS, sizeof(cfg->egress_qos), &cfg->egress_qos);
+
 	nla_nest_end(msg, data);
 	nla_nest_end(msg, linkinfo);
 

@@ -18,6 +18,7 @@
 #include <sys/time.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <linux/if_link.h>
 #include "device.h"
 #include "interface-ip.h"
 #include "iprule.h"
@@ -154,6 +155,7 @@ enum vlan_proto {
 struct vlandev_config {
 	enum vlan_proto proto;
 	uint16_t vid;
+	struct ifla_vlan_qos_mapping egress_qos;
 };
 
 static inline int system_get_addr_family(unsigned int flags)
