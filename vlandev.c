@@ -13,6 +13,7 @@
  */
 
 #include <string.h>
+#include <inttypes.h>
 
 #include "netifd.h"
 #include "device.h"
@@ -170,10 +171,23 @@ vlandev_apply_settings(struct vlandev_device *mvdev, struct blob_attr **tb)
 
 	if ((cur = tb[VLANDEV_ATTR_VID]))
 		cfg->vid = (uint16_t) blobmsg_get_u32(cur);
-	if ((cur = tb[VLANDEV_ATTR_EGRESS_QOS_FROM]))
+	if ((cur = tb[VLANDEV_ATTR_EGRESS_QOS_FROM])) {
 		cfg->egress_qos.from = (uint32_t) blobmsg_get_u32(cur);
-	if ((cur = tb[VLANDEV_ATTR_EGRESS_QOS_TO]))
+		D(SYSTEM, "pespin: vlandev_apply_settings(): found cfg egress_qos.from=%" PRIu32 ,
+		  cfg->egress_qos.from);
+	} else {
+		D(SYSTEM, "pespin: vlandev_apply_settings(): didn't find cfg egress_qos.from");
+	}
+	if ((cur = tb[VLANDEV_ATTR_EGRESS_QOS_TO])) {
 		cfg->egress_qos.to = (uint32_t) blobmsg_get_u32(cur);
+		D(SYSTEM, "pespin: vlandev_apply_settings(): found cfg egress_qos.to=%" PRIu32 ,
+		  cfg->egress_qos.to);
+	} else {
+		D(SYSTEM, "pespin: vlandev_apply_settings(): didn't find cfg egress_qos.to");
+	}
+
+	D(SYSTEM, "pespin: vlandev_apply_settings() end: egress_qos = {.from=%" PRIu32 ", .to=%" PRIu32 "}",
+	  cfg->egress_qos.from, cfg->egress_qos.to);
 }
 
 static enum dev_change_type

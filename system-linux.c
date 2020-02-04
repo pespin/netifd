@@ -61,6 +61,7 @@
 #include <glob.h>
 #include <time.h>
 #include <unistd.h>
+#include <inttypes.h>
 
 #include <netlink/msg.h>
 #include <netlink/attr.h>
@@ -1348,6 +1349,11 @@ int system_vlandev_add(struct device *vlandev, struct device *dev, struct vlande
 	if(cfg->proto == VLAN_PROTO_8021AD)
 		netifd_log_message(L_WARNING, "%s Your kernel is older than linux 3.10.0, 802.1ad is not supported defaulting to 802.1q", vlandev->type->name);
 #endif
+
+	netifd_log_message(L_WARNING, "pespin1: %s: Sending RTM_NEWLINK with egress_qos = {.from=%" PRIu32 ", .to=%" PRIu32 "}",
+			   vlandev->type->name, cfg->egress_qos.from, cfg->egress_qos.to);
+	D(SYSTEM, "pespin2: %s: Sending RTM_NEWLINK with egress_qos = {.from=%" PRIu32 ", .to=%" PRIu32 "}",
+	  vlandev->type->name, cfg->egress_qos.from, cfg->egress_qos.to);
 
 	nla_put(msg, IFLA_VLAN_EGRESS_QOS, sizeof(cfg->egress_qos), &cfg->egress_qos);
 
